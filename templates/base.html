@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Minha Correia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav>
+    <a href="{{ url_for('index') }}">Início</a>
+    <a href="{{ url_for('consulta') }}">Consulta</a>
+    <a href="{{ url_for('registro/troca') }}">Registro</a>
+</nav>
+
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

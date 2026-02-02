@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Consultar Troca de Correia Dentada</h1>
+    <form action="/consulta" method="post">
+        <label for="placa">Placa do Veículo:</label>
+        <input type="text" id="placa" name="placa" required>
+        <button type="submit">Consultar Troca</button>
+    </form>
+    <button type="submit">Voltar a página inicial</button>
+{% endblock %}
