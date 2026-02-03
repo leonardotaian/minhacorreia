@@ -50,12 +50,12 @@ def consultar_oficina(email):
     except Exception as e:
         return f"Erro ao consultar oficina: {e}"
 
-def registrar_troca(id, id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel):
+def registrar_troca(id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel):
     try:
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
-        sql_registro_troca = f'INSERT INTO troca_correia (id, id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel) VALUES ({id}, {id_veiculo}, "{placa}", "{data_troca}", {km_troca}, {km_proxima}, "{data_proxima}", "{oficina_responsavel}")'
-        cursor.execute(sql_registro_troca)
+        sql_registro_troca = '''INSERT INTO troca_correia (id, id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
+        cursor.execute(sql_registro_troca, (id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel))
         conn.commit()
         conn.close()
         msg = "Troca de correia registrada com sucesso!"

@@ -1,8 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Registro da Troca da Correia Dentada</h1>
-    <form action="/registro" method="post">
+    <h2> Caso o veículo ainda não esteja cadastrado, cadastre-o primeiro</h2>
+    
+    <h1>Consulta e registro de veículos</h1>
+    <h2>Consultar veículo</h2>
+    <form action="/consulta/veiculo" method="post">
+        <label for="placa">Placa do Veículo:</label>
+        <input type="text" id="placa" name="placa" required>
+        <button type="submit">Consultar Veículo</button>
+    </form>
+    <h2>{{ veiculo }}</h2>
+     <h1>Registro da Troca da Correia Dentada</h1>
+    <form action="/registro/troca" method="post">
         <label for="placa">Placa do Veículo:</label>
         <input type="text" id="placa" name="placa" required>
 
@@ -23,12 +33,4 @@
 
         <button type="submit">Registrar Troca</button>
     </form>
-    <h1>Consulta e registro de veículos</h1>
-    <h2>Consultar veículo</h2>
-    <form action="/registro" method="post">
-        <label for="placa">Placa do Veículo:</label>
-        <input type="text" id="placa" name="placa" required>
-        <button type="submit">Consultar Veículo</button>
-    </form>
-    <h2>{{ veiculo }}</h2>
 {% endblock %}
