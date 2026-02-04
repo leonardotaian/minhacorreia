@@ -1,16 +1,6 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <h2> Caso o veículo ainda não esteja cadastrado, cadastre-o primeiro</h2>
-    
-    <h1>Consulta e registro de veículos</h1>
-    <h2>Consultar veículo</h2>
-    <form action="/consulta/veiculo" method="post">
-        <label for="placa">Placa do Veículo:</label>
-        <input type="text" id="placa" name="placa" required>
-        <button type="submit">Consultar Veículo</button>
-    </form>
-    <h2>{{ veiculo }}</h2>
+{% block content %}  
      <h1>Registro da Troca da Correia Dentada</h1>
     <form action="/registro/troca" method="post">
         <label for="placa">Placa do Veículo:</label>
@@ -19,11 +9,12 @@
         <label for="data_troca">Data da Troca:</label>
         <input type="date" id="data_troca" name="data_troca" required>
 
+        <label for="km_troca">Quilometragem atual:</label>
+        <input type="number" id="km_troca" name="km_troca" required>
+        
         <label for="data_proxima">Data da próxima troca:</label>
         <input type="date" id="data_proxima" name="data_proxima" required>
 
-        <label for="km_troca">Quilometragem atual:</label>
-        <input type="number" id="km_troca" name="km_troca" required>
 
         <label for="km_proxima">Quilometragem para próxima troca:</label>
         <input type="number" id="km_proxima" name="km_proxima" required>

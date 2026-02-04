@@ -1,5 +1,21 @@
 import sqlite3
 
+
+def obter_id_veiculo(placa):
+    try:
+        conn = sqlite3.connect('mc.db')
+        cursor = conn.cursor()
+        sql_obter_id = '''SELECT id FROM veiculo WHERE placa = ? '''
+        cursor.execute(sql_obter_id)
+        resultado = cursor.fetchone()
+        conn.close()
+        if resultado:
+            return resultado[0]
+        else:
+            return None
+    except Exception as e:
+        return f"Erro ao obter ID do veículo: {e}"
+
 def cadastrar_veiculo(id, marca, modelo, placa):
     try:
         conn = sqlite3.connect('mc.db')
@@ -55,7 +71,7 @@ def registrar_troca(id_veiculo, placa, data_troca, km_troca, km_proxima, data_pr
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
         sql_registro_troca = '''INSERT INTO troca_correia (id, id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
-        cursor.execute(sql_registro_troca, (id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel))
+        cursor.execute(sql_registro_troca, (None, id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel))
         conn.commit()
         conn.close()
         msg = "Troca de correia registrada com sucesso!"

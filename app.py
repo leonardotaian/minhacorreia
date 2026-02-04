@@ -28,8 +28,8 @@ def registro():
         km_troca = request.form['km_troca']
         km_proxima = request.form['km_proxima']
         data_proxima = request.form['data_proxima']
-        oficina = request.form['oficina']
-        msg = db.registrar_troca(placa, data_troca, km_troca, km_proxima, data_proxima, oficina)
+        oficina_responsavel = request.form['oficina']
+        msg = db.registrar_troca(placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel)
         return render_template('registro.html', msg=msg)
     return render_template('registro.html')
 
