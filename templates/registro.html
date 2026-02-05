@@ -3,6 +3,13 @@
 {% block content %}  
      <h1>Registro da Troca da Correia Dentada</h1>
     <form action="/registro/troca" method="post">
+
+        <label for="modelo">Modelo do Veículo:</label>
+        <input type="text" id="modelo" name="modelo" required>
+
+        <label for="marca">Marca do Veículo:</label>
+        <input type="text" id="marca" name="marca" required>
+
         <label for="placa">Placa do Veículo:</label>
         <input type="text" id="placa" name="placa" required>
 
@@ -19,8 +26,8 @@
         <label for="km_proxima">Quilometragem para próxima troca:</label>
         <input type="number" id="km_proxima" name="km_proxima" required>
 
-        <label for="oficina">Oficina Responsável:</label>
-        <input type="text" id="oficina" name="oficina" required>
+        <label for="oficina_responsavel">Oficina Responsável:</label>
+        <input type="text" id="oficina_responsavel" name="oficina_responsavel" required>
 
         <button type="submit">Registrar Troca</button>
     </form>

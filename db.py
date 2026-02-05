@@ -1,22 +1,31 @@
 import sqlite3
 
 
-def obter_id_veiculo(placa):
+def obter_id_veiculo(placa, marca, modelo):
+    placa = placa.strip().upper()
     try:
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
-        sql_obter_id = '''SELECT id FROM veiculo WHERE placa = ? '''
-        cursor.execute(sql_obter_id)
+        sql_obter_id = '''SELECT id FROM veiculo WHERE placa = ? AND marca = ? AND modelo = ?'''
+        cursor.execute(sql_obter_id, (placa, marca, modelo))
         resultado = cursor.fetchone()
-        conn.close()
         if resultado:
             return resultado[0]
         else:
-            return None
+            conn = sqlite3.connect('mc.db')
+            cursor = conn.cursor() 
+            sql_registrar_veiculo = '''INSERT INTO veiculo (marca, modelo, placa) VALUES (?, ?, ?)'''
+            cursor.execute(sql_registrar_veiculo, (marca, modelo, placa))
+            resultado = cursor.lastrowid()
+            conn.commit()
+            conn.close()
+            return resultado
+            
     except Exception as e:
         return f"Erro ao obter ID do veículo: {e}"
 
 def cadastrar_veiculo(id, marca, modelo, placa):
+    placa = placa.strip().upper()
     try:
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
@@ -30,6 +39,7 @@ def cadastrar_veiculo(id, marca, modelo, placa):
         return f"Erro ao cadastrar veículo: {e}"
 
 def consultar_veiculo(placa):
+    placa = placa.strip().upper()
     try:
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
@@ -41,11 +51,11 @@ def consultar_veiculo(placa):
     except Exception as e:
         return f"Erro ao consultar veículo: {e}"
 
-def cadastrar_oficina(id, nome, email, senha):
+def cadastrar_oficina(nome, email, senha):
     try:
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
-        sql_registro_oficina = f'INSERT INTO oficina (id, nome, email, senha) VALUES ({id}, "{nome}", "{email}", "{senha}")'
+        sql_registro_oficina = f'INSERT INTO oficina ( nome, email, senha) VALUES ("{nome}", "{email}", "{senha}")'
         cursor.execute(sql_registro_oficina)
         conn.commit()
         conn.close()
@@ -66,12 +76,14 @@ def consultar_oficina(email):
     except Exception as e:
         return f"Erro ao consultar oficina: {e}"
 
-def registrar_troca(id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel):
+def registrar_troca(id_veiculo, placa, marca, modelo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel):
+    placa = placa.strip().upper()
+    id_veiculo = obter_id_veiculo(placa, marca, modelo)
     try:
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
-        sql_registro_troca = '''INSERT INTO troca_correia (id, id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
-        cursor.execute(sql_registro_troca, (None, id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel))
+        sql_registro_troca = '''INSERT INTO troca_correia (id, id_veiculo, placa, marca, modelo, data_troca, km_troca, km_proxima, data_proxima, oficina) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+        cursor.execute(sql_registro_troca, (id_veiculo, placa, marca, modelo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel))
         conn.commit()
         conn.close()
         msg = "Troca de correia registrada com sucesso!"
@@ -80,6 +92,7 @@ def registrar_troca(id_veiculo, placa, data_troca, km_troca, km_proxima, data_pr
         return f"Erro ao registrar troca de correia: {e}"
     
 def consultar_troca(placa):
+    placa = placa.strip().upper()   
     try:
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
