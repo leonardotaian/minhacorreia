@@ -7,5 +7,13 @@
         <input type="text" id="placa" name="placa" required>
         <button type="submit">Consultar Troca</button>
     </form>
+    <h2>{{ msg }}</h2>
+    <h1>Consultar veículo</h1>
+    <form action="/consulta/veiculo" method="post">
+        <label for="placa">Placa do Veículo:</label>
+        <input type="text" id="placa" name="placa" required>
+        <button type="submit">Consultar Veículo</button>
+    </form>
+    <h2>{{ veiculo }}</h2>
     <button type="submit">Voltar a página inicial</button>
 {% endblock %}

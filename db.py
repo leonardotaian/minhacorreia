@@ -82,7 +82,7 @@ def registrar_troca(id_veiculo, placa, marca, modelo, data_troca, km_troca, km_p
     try:
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
-        sql_registro_troca = '''INSERT INTO troca_correia (id, id_veiculo, placa, marca, modelo, data_troca, km_troca, km_proxima, data_proxima, oficina) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+        sql_registro_troca = '''INSERT INTO trocas (id, id_veiculo, placa, marca, modelo, data_troca, km_troca, km_proxima, data_proxima, oficina) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
         cursor.execute(sql_registro_troca, (id_veiculo, placa, marca, modelo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel))
         conn.commit()
         conn.close()
@@ -96,7 +96,7 @@ def consultar_troca(placa):
     try:
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
-        sql_consulta_troca = f'SELECT * FROM troca_correia WHERE placa="{placa}"'
+        sql_consulta_troca = f'SELECT * FROM trocas WHERE placa="{placa}"'
         cursor.execute(sql_consulta_troca)
         troca = cursor.fetchone()
         conn.close()

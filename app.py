@@ -8,6 +8,12 @@ def index():
     return render_template('index.html')
 @app.route('/consulta', methods=['GET', 'POST'])
 def consulta():
+    if request.method == 'POST':
+        placa = request.form['placa']
+        veiculo = db.consultar_troca(placa)
+        if not veiculo:
+                msg = "Veículo não encontrado."
+        return render_template('consulta.html', msg=msg)
     return render_template('consulta.html')
 @app.route('/consulta/veiculo', methods=['GET', 'POST'])
 def consulta_veiculo():
