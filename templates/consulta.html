@@ -7,13 +7,31 @@
         <input type="text" id="placa" name="placa" required>
         <button type="submit">Consultar Troca</button>
     </form>
-    <h2>{{ msg }}</h2>
+    {% if msg %}
+  <p>{{ msg }}</p>
+{% endif %}
+
+{% if veiculo %}
+  <h2>Troca encontrada</h2>
+  <ul>
+    <li>Placa: {{ veiculo[2] }}</li>
+    <li>Data troca: {{ veiculo[3] }}</li>
+    <li>KM troca: {{ veiculo[4] }}</li>
+    <li>Próxima troca (KM): {{ veiculo[5] }}</li>
+    <li>Data próxima: {{ veiculo[6] }}</li>
+    <li>Oficina: {{ veiculo[7] }}</li>
+  </ul>
+{% endif %}
+
     <h1>Consultar veículo</h1>
     <form action="/consulta/veiculo" method="post">
         <label for="placa">Placa do Veículo:</label>
         <input type="text" id="placa" name="placa" required>
+        <label for="marca">Marca do Veículo:</label>
+        <input type="text" id="marca" name="marca" required>
+        <label for="modelo">Modelo do Veículo:</label>
+        <input type="text" id="modelo" name="modelo" required>
         <button type="submit">Consultar Veículo</button>
     </form>
-    <h2>{{ veiculo }}</h2>
     <button type="submit">Voltar a página inicial</button>
 {% endblock %}

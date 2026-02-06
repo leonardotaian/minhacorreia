@@ -9,20 +9,23 @@ def index():
 @app.route('/consulta', methods=['GET', 'POST'])
 def consulta():
     if request.method == 'POST':
+        msg = None
         placa = request.form['placa']
         veiculo = db.consultar_troca(placa)
         if not veiculo:
-                msg = "Veículo não encontrado."
-        return render_template('consulta.html', msg=msg)
+                msg = "Nenhuma troca registrada para este veículo."
+        return render_template('consulta.html', msg=msg, veiculo=veiculo)
     return render_template('consulta.html')
 @app.route('/consulta/veiculo', methods=['GET', 'POST'])
 def consulta_veiculo():
     if request.method == 'POST':
         placa = request.form['placa']
-        veiculo = db.consultar_veiculo(placa)
+        marca = request.form['marca']
+        modelo = request.form['modelo']
+        veiculo = db.obter_id_veiculo(placa, marca, modelo)
         if not veiculo:
                 veiculo = "Veículo não encontrado."
-        return render_template('registro.html', veiculo=veiculo)
+        return render_template('consulta.html', veiculo=veiculo)
     print(veiculo)
     return render_template('registro.html')
 
@@ -30,15 +33,13 @@ def consulta_veiculo():
 def registro():
     if request.method == 'POST':
         id_veiculo = db.obter_id_veiculo(request.form['placa'], request.form['marca'], request.form['modelo'])
-        modelo = request.form['modelo']
-        marca = request.form['marca']
         placa = request.form['placa']
         data_troca = request.form['data_troca']
-        km_troca = request.form['km_troca']
-        km_proxima = request.form['km_proxima']
+        km_troca = int(request.form['km_troca'])
+        km_proxima = int(request.form['km_proxima'])
         data_proxima = request.form['data_proxima']
         oficina_responsavel = request.form['oficina_responsavel']
-        msg = db.registrar_troca(id_veiculo, placa, modelo, marca, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel)
+        msg = db.registrar_troca(id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel)
         return render_template('registro.html', msg=msg)
     return render_template('registro.html')
 
