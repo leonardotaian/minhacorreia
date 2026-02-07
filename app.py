@@ -150,8 +150,3 @@ def registro():
         msg_type = 'success' if 'sucesso' in msg.lower() else 'error'
         return render_template('registro.html', msg=msg, msg_type=msg_type)
     return render_template('registro.html')
-
-
-
-
-app.run(debug=False)
