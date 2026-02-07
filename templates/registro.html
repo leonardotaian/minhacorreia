@@ -19,14 +19,14 @@
         <input type="date" id="data_troca" name="data_troca" required>
 
         <label for="km_troca">Quilometragem atual:</label>
-        <input type="number" id="km_troca" name="km_troca" maxlength="7" minlength="5" required>
+        <input type="number" id="km_troca" name="km_troca" min="0" max="999999" required>
         
         <label for="data_proxima">Data da próxima troca:</label>
         <input type="date" id="data_proxima" name="data_proxima" required>
 
 
         <label for="km_proxima">Quilometragem para próxima troca:</label>
-        <input type="number" id="km_proxima" name="km_proxima" maxlength="7" required>
+        <input type="number" id="km_proxima" name="km_proxima" min="0" max="999999" required>
 
         <label for="oficina_responsavel">Oficina Responsável:</label>
         <input type="text" id="oficina_responsavel" name="oficina_responsavel" required>

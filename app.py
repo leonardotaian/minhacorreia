@@ -50,6 +50,12 @@ def registro():
             msg = "Ano da troca deve ser o ano atual."
             return render_template('registro.html', msg=msg)
         km_troca = int(request.form['km_troca'])
+        if km_troca < 0:
+            msg = "Quilometragem da troca deve ser maior que zero."
+            return render_template('registro.html', msg=msg)
+        if km_troca > 999999:
+            msg = "Quilometragem não aceita (maior que 999.999 km)."
+            return render_template('registro.html', msg=msg)
         km_proxima = int(request.form['km_proxima'])
         data_proxima = request.form['data_proxima']
         oficina_responsavel = request.form['oficina_responsavel']
