@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, url_for
-import db
-
+import db, re
+from datetime import date
 app = Flask(__name__)
 
 @app.route('/')
@@ -32,9 +32,23 @@ def consulta_veiculo():
 @app.route('/registro/troca', methods=['GET', 'POST'])    
 def registro():
     if request.method == 'POST':
-        id_veiculo = db.obter_id_veiculo(request.form['placa'], request.form['marca'], request.form['modelo'])
         placa = request.form['placa']
+        placa = placa.strip().upper()
+        padrao_antigo = r'^[A-Z]{3}[0-9]{4}$'
+        padrao_mercosul = r'^[A-Z]{3}[0-9][A-Z][0-9]{2}$'
+        if not (re.match(padrao_antigo, placa) or re.match(padrao_mercosul, placa)):
+            msg = "Placa inválida. Use o formato ABC1234 ou ABC1D34 (mercosul)."
+            return render_template('registro.html', msg=msg)
+        if len (placa) != 7:
+            msg = "Placa deve conter exatamente 7 caracteres."
+            return render_template('registro.html', msg=msg)
+        id_veiculo = db.obter_id_veiculo(request.form['placa'], request.form['marca'], request.form['modelo'])
         data_troca = request.form['data_troca']
+        ano_atual = date.today().year
+        ano = int(data_troca[:4])
+        if ano != ano_atual:
+            msg = "Ano da troca deve ser o ano atual."
+            return render_template('registro.html', msg=msg)
         km_troca = int(request.form['km_troca'])
         km_proxima = int(request.form['km_proxima'])
         data_proxima = request.form['data_proxima']

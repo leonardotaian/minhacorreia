@@ -4,7 +4,7 @@
     <h1>Consultar Troca de Correia Dentada</h1>
     <form action="/consulta" method="post">
         <label for="placa">Placa do Veículo:</label>
-        <input type="text" id="placa" name="placa" required>
+        <input type="text" id="placa" name="placa" maxlength="7" minlength="7" required>
         <button type="submit">Consultar Troca</button>
     </form>
     {% if msg %}
@@ -18,7 +18,7 @@
     <li>Data troca: {{ veiculo[3] }}</li>
     <li>KM troca: {{ veiculo[4] }}</li>
     <li>Próxima troca (KM): {{ veiculo[5] }}</li>
-    <li>Data próxima: {{ veiculo[6] }}</li>
+    <li>Data para a próxima troca: {{ veiculo[6] }}</li>
     <li>Oficina: {{ veiculo[7] }}</li>
   </ul>
 {% endif %}
