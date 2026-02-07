@@ -14,18 +14,21 @@ def obter_id_veiculo(placa):
     return resultado[0] if resultado else None
 
 def criar_veiculo(placa, marca, modelo):
-    placa = placa.strip().upper()
-    marca = marca.upper()
-    modelo = modelo.upper()
-    conn = sqlite3.connect('mc.db')
-    cursor = conn.cursor()
-    cursor.execute(
-        'INSERT INTO veiculo (marca, modelo, placa) VALUES (?, ?, ?)',
-        (marca, modelo, placa))
-    id_veiculo = cursor.lastrowid
-    conn.commit()
-    conn.close()
-    return id_veiculo
+    try:
+        placa = placa.strip().upper()
+        marca = marca.upper()
+        modelo = modelo.upper()
+        conn = sqlite3.connect('mc.db')
+        cursor = conn.cursor()
+        cursor.execute(
+            'INSERT INTO veiculo (placa, marca, modelo) VALUES (?, ?, ?)',
+            (placa, marca, modelo))
+        id_veiculo = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        return id_veiculo
+    except Exception:
+        return None
 
 
 
@@ -58,7 +61,7 @@ def registrar_troca(id_veiculo, data_troca, km_troca, km_proxima, data_proxima, 
     try:
         conn = sqlite3.connect('mc.db')
         cursor = conn.cursor()
-        sql_registro_troca = '''INSERT INTO trocas (id_veiculo, data_troca, km_troca, km_proxima, data_proxima, oficina) VALUES (?, ?, ?, ?, ?, ?, ?)'''
+        sql_registro_troca = '''INSERT INTO trocas (id_veiculo, data_troca, km_troca, km_proxima, data_proxima, oficina) VALUES (?, ?, ?, ?, ?, ?)'''
         cursor.execute(sql_registro_troca, (id_veiculo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel))
         conn.commit()
         conn.close()
@@ -77,8 +80,8 @@ def consultar_troca(id_veiculo):
         msg = cursor.fetchall()
         conn.close()
         return msg
-    except Exception as e:
-        return f"Erro ao consultar troca de correia: {e}"
+    except Exception:
+        return None
     
 def consultar_duplicidade_email(email):
     try:

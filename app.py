@@ -35,6 +35,9 @@ def cadastro():
         elif dupli_nome is None:
             msg = "Erro interno. Tente novamente."
             return render_template('cadastro.html', msg=msg)
+        if msg is None:
+            msg = "Erro interno, tente novamente."
+            return render_template('cadastro.html', msg=msg)
         
         senha_hash = generate_password_hash(senha)
         msg = db.cadastrar_oficina(nome, email, senha_hash)
@@ -79,6 +82,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('usuario_id', None)
+    session.pop('usuario_nome', None)
     flash("Logout realizado com sucesso.")
     return redirect(url_for('index'))
 
@@ -89,9 +93,11 @@ def consulta():
         msg = None
         placa = request.form['placa']
         id_veiculo = db.obter_id_veiculo(placa)
+        if id_veiculo is None:
+            msg = "Veículo não cadastrado."
+            return render_template('consulta.html', msg=msg)
         veiculo = db.consultar_troca(id_veiculo)
-        if not veiculo:
-                msg = "Nenhuma troca registrada para este veículo."
+        
         return render_template('consulta.html', msg=msg, veiculo=veiculo)
     return render_template('consulta.html')
 
@@ -111,7 +117,11 @@ def registro():
         if len (placa) != 7:
             msg = "Placa deve conter exatamente 7 caracteres."
             return render_template('registro.html', msg=msg)
-        id_veiculo = db.obter_id_veiculo(request.form['placa'], request.form['marca'], request.form['modelo'])
+        id_veiculo = db.obter_id_veiculo(placa)
+        if id_veiculo is None:
+            marca = request.form['marca']
+            modelo =  request.form['modelo']
+            id_veiculo = db.criar_veiculo(placa, marca, modelo)
         data_troca = request.form['data_troca']
         ano_atual = date.today().year
         ano = int(data_troca[:4])
