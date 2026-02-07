@@ -28,18 +28,6 @@ def obter_id_veiculo(placa, marca, modelo):
         return f"Erro ao obter ID do veículo: {e}"
 
 
-def consultar_veiculo(placa):
-    placa = placa.strip().upper()
-    try:
-        conn = sqlite3.connect('mc.db')
-        cursor = conn.cursor()
-        sql_consulta_veiculo = '''SELECT * FROM veiculo WHERE placa=?'''
-        cursor.execute(sql_consulta_veiculo,(placa,))
-        veiculo = cursor.fetchone()
-        conn.close()
-        return veiculo
-    except Exception as e:
-        return f"Erro ao consultar veículo: {e}"
 
 def cadastrar_oficina(nome, email, senha):
     try:

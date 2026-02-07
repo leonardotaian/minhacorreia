@@ -16,18 +16,7 @@ def consulta():
                 msg = "Nenhuma troca registrada para este veículo."
         return render_template('consulta.html', msg=msg, veiculo=veiculo)
     return render_template('consulta.html')
-@app.route('/consulta/veiculo', methods=['GET', 'POST'])
-def consulta_veiculo():
-    if request.method == 'POST':
-        placa = request.form['placa']
-        marca = request.form['marca']
-        modelo = request.form['modelo']
-        veiculo = db.obter_id_veiculo(placa, marca, modelo)
-        if not veiculo:
-                veiculo = "Veículo não encontrado."
-        return render_template('consulta.html', veiculo=veiculo)
-    print(veiculo)
-    return render_template('registro.html')
+
 
 @app.route('/registro/troca', methods=['GET', 'POST'])    
 def registro():
@@ -63,15 +52,6 @@ def registro():
         return render_template('registro.html', msg=msg)
     return render_template('registro.html')
 
-@app.route('/cadastro', methods=['GET', 'POST'])
-def cadastro():
-    if request.method == 'POST':
-        marca = request.form['marca']
-        modelo = request.form['modelo']
-        placa = request.form['placa']
-        id = db.obter_id_veiculo(placa, marca, modelo)
-        msg = db.cadastrar_veiculo(id, marca, modelo, placa)
-        return render_template('cadastro.html', msg=msg)
 
 
 
