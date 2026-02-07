@@ -1,26 +1,56 @@
 {% extends "base.html" %}
 
+{% block title %}Consultar Trocas - Minha Correia{% endblock %}
+
 {% block content %}
-    <h1>Consultar Troca de Correia Dentada</h1>
-    <form action="/consulta" method="post">
-        <label for="placa">Placa do Veículo:</label>
-        <input type="text" id="placa" name="placa" maxlength="7" minlength="7" required>
-        <button type="submit">Consultar Troca</button>
-    </form>
-    {% if msg %}
-  <p>{{ msg }}</p>
-{% endif %}
+    <div class="card">
+        <h1>Consultar Histórico de Trocas</h1>
+        <p>Pesquise o histórico de trocas de correia de um veículo usando a placa</p>
 
-{% if veiculo %}
-  <h2>Troca encontrada</h2>
-  <ul>
-    <li>Placa: {{ veiculo[2] }}</li>
-    <li>Data troca: {{ veiculo[3] }}</li>
-    <li>KM troca: {{ veiculo[4] }}</li>
-    <li>Próxima troca (KM): {{ veiculo[5] }}</li>
-    <li>Data para a próxima troca: {{ veiculo[6] }}</li>
-    <li>Oficina: {{ veiculo[7] }}</li>
-  </ul>
-{% endif %}
+        <form method="POST" action="{{ url_for('consulta') }}">
+            <div class="form-group">
+                <label for="placa"><span class="required">Placa do Veículo</span></label>
+                <input type="text" id="placa" name="placa" required placeholder="ABC1234 ou ABC1D34 (Mercosul)" maxlength="7" style="text-transform: uppercase;">
+                <small style="color: #7f8c8d; margin-top: 0.25rem; display: block;">Formatos aceitos: ABC1234 (antigo) ou ABC1D34 (Mercosul)</small>
+            </div>
 
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Buscar Histórico</button>
+        </form>
+    </div>
+
+    {% if veiculo %}
+        <div class="card">
+            <h2>Histórico de Trocas</h2>
+            {% if veiculo|length > 0 %}
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data da Troca</th>
+                                <th>Quilometragem</th>
+                                <th>Quilometragem da Próxima Troca</th>
+                                <th>Data Prevista para a Próxima Troca</th>
+                                <th>Oficina Responsável</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for troca in veiculo %}
+                                <tr>
+                                    <td>{{ troca[2] | br_date }}</td>
+                                    <td>{{ "{:,}".format(troca[3]).replace(',', '.') }} km</td>
+                                    <td>{{ "{:,}".format(troca[4]).replace(',', '.') }} km</td>
+                                    <td>{{ troca[5] | br_date }}</td>
+                                    <td>{{ troca[6] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    Nenhum registro de troca encontrado para este veículo.
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}

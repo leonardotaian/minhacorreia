@@ -1,23 +1,42 @@
 {% extends "base.html" %}
 
+{% block title %}Cadastro - Minha Correia{% endblock %}
+
 {% block content %}
-    <h1>Cadastro de Oficina</h1>
-    <form action="/cadastro" method="post">
-        <label for="nome">Nome da Oficina:</label>
-        <input type="text" id="nome" name="nome" required>
+    <div class="card">
+        <h1>Criar Conta</h1>
+        <p>Preencha o formulário abaixo para criar sua conta. É rápido e seguro!</p>
 
-        <label for="email">E-mail:</label>
-        <input type="email" id="email" name="email" placeholder="Email" required>
+        <form method="POST" action="{{ url_for('cadastro') }}">
+            <div class="form-group">
+                <label for="nome"><span class="required">Nome da Oficina</span></label>
+                <input type="text" id="nome" name="nome" required placeholder="Digite o nome da sua oficina">
+            </div>
 
-        <label for="senha">Senha:</label>
-        <input type="password" id="senha" name="senha" required>
+            <div class="form-group">
+                <label for="email"><span class="required">Email</span></label>
+                <input type="email" id="email" name="email" required placeholder="seu.email@exemplo.com">
+            </div>
 
-        <label for="token">Token de acesso:</label>
-        <input type="text" id="token" name="token" required>
+            <div class="form-group">
+                <label for="senha"><span class="required">Senha</span></label>
+                <input type="password" id="senha" name="senha" required placeholder="Digite uma senha segura" minlength="6">
+            </div>
 
-        <button type="submit">Cadastrar</button>
-    </form>
-    {% if msg %}
-  <p>{{ msg }}</p>
-    {% endif %}
+            <div class="form-group">
+                <label for="token"><span class="required">Token de Cadastro</span></label>
+                <input type="password" id="token" name="token" required placeholder="Digite o token de cadastro fornecido">
+                <small style="color: #7f8c8d; margin-top: 0.25rem; display: block;">Solicite o token ao administrador do sistema</small>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">Criar Conta</button>
+                <a href="{{ url_for('index') }}" class="btn">Cancelar</a>
+            </div>
+        </form>
+
+        <p style="margin-top: 2rem; text-align: center;">
+            Já tem conta? <a href="{{ url_for('login') }}">Faça login aqui</a>
+        </p>
+    </div>
 {% endblock %}

@@ -1,34 +1,70 @@
 {% extends "base.html" %}
 
-{% block content %}  
-     <h1>Registro da Troca da Correia Dentada</h1>
-    <form action="/registro/troca" method="post">
+{% block title %}Registrar Troca - Minha Correia{% endblock %}
 
-        <label for="modelo">Modelo do Veículo:</label>
-        <input type="text" id="modelo" name="modelo" required>
+{% block content %}
+    <div class="card">
+        <h1>Registrar Troca de Correia Dentada</h1>
+        <p>Preencha os dados abaixo para registrar uma nova troca de correia dentada</p>
 
-        <label for="marca">Marca do Veículo:</label>
-        <input type="text" id="marca" name="marca" required>
+        <form method="POST" action="{{ url_for('registro') }}">
+            <h2 style="font-size: 1.2rem; color: var(--primary-color); margin-top: 1.5rem; margin-bottom: 1rem;">Informações do Veículo</h2>
+            
+            <div class="form-group">
+                <label for="placa"><span class="required">Placa do Veículo</span></label>
+                <input type="text" id="placa" name="placa" required placeholder="ABC1234 ou ABC1D34 (Mercosul)" maxlength="7" style="text-transform: uppercase;">
+                <small style="color: #7f8c8d; margin-top: 0.25rem; display: block;">Formatos aceitos: ABC1234 (antigo) ou ABC1D34 (Mercosul)</small>
+            </div>
 
-        <label for="placa">Placa do Veículo:</label>
-        <input type="text" id="placa" name="placa" maxlength="7" minlength="7"
-        placeholder="ABC1234 ou ABC1D34 (mercosul)" size="25" title="Formato válido: ABC1234 ou ABC1D34 (mercosul)"
-        pattern="[A-Za-z]{3}[0-9]{4}|[A-Za-z]{3}[0-9][A-Za-z][0-9]{2}" required>
+            <div class="form-group">
+                <label for="marca"><span class="required">Marca</span></label>
+                <input type="text" id="marca" name="marca" required placeholder="Ex: Toyota, Volkswagen, Fiat">
+            </div>
 
-        <label for="data_troca">Data da Troca:</label>
-        <input type="date" id="data_troca" name="data_troca" required>
+            <div class="form-group">
+                <label for="modelo"><span class="required">Modelo</span></label>
+                <input type="text" id="modelo" name="modelo" required placeholder="Ex: Corolla, Golf, Uno">
+            </div>
 
-        <label for="km_troca">Quilometragem atual:</label>
-        <input type="number" id="km_troca" name="km_troca" min="0" max="999999" required>
-        
-        <label for="data_proxima">Data da próxima troca:</label>
-        <input type="date" id="data_proxima" name="data_proxima" required>
+            <h2 style="font-size: 1.2rem; color: var(--primary-color); margin-top: 1.5rem; margin-bottom: 1rem;">Informações da Troca</h2>
 
+            <div class="form-group">
+                <label for="data_troca"><span class="required">Data da Troca</span></label>
+                <input type="date" id="data_troca" name="data_troca" required>
+                <small style="color: #7f8c8d; margin-top: 0.25rem; display: block;">Deve ser a data atual</small>
+            </div>
 
-        <label for="km_proxima">Quilometragem para próxima troca:</label>
-        <input type="number" id="km_proxima" name="km_proxima" min="0" max="999999" required>
+            <div class="form-group">
+                <label for="km_troca"><span class="required">Quilometragem na Troca (km)</span></label>
+                <input type="number" id="km_troca" name="km_troca" required placeholder="Ex: 120000" min="0" max="999999">
+            </div>
 
-        <button type="submit">Registrar Troca</button>
-        <h2>{{ msg }}</h2>
-    </form>
+            <h2 style="font-size: 1.2rem; color: var(--primary-color); margin-top: 1.5rem; margin-bottom: 1rem;">Próxima Troca Prevista</h2>
+
+            <div class="form-group">
+                <label for="km_proxima"><span class="required">Quilometragem da Próxima Troca (km)</span></label>
+                <input type="number" id="km_proxima" name="km_proxima" required placeholder="Ex: 170000" min="0" max="999999">
+            </div>
+
+            <div class="form-group">
+                <label for="data_proxima"><span class="required">Data Prevista da Próxima Troca</span></label>
+                <input type="date" id="data_proxima" name="data_proxima" required>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-success">Registrar Troca</button>
+                <a href="{{ url_for('index') }}" class="btn">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="card" style="background-color: #f9f9f9; border-left: 4px solid var(--info-color);">
+        <h3>💡 Dicas</h3>
+        <ul style="margin-left: 1.5rem;">
+            <li>Se o veículo não existir no sistema, ele será criado automaticamente</li>
+            <li>A placa deve estar no formato correto (antigo ou Mercosul)</li>
+            <li>A data da troca deve ser do ano atual</li>
+            <li>A quilometragem deve ser um número positivo menor que 999.999 km</li>
+        </ul>
+    </div>
 {% endblock %}

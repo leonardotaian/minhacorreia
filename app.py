@@ -6,6 +6,16 @@ from datetime import date
 app = Flask(__name__)
 app.secret_key = 'chave-secreta-para-sessao'
 
+@app.template_filter('br_date')
+def br_date(date_str):
+    """Converte data de YYYY-MM-DD para DD-MM-YYYY"""
+    if not date_str:
+        return ''
+    parts = str(date_str).split('-')
+    if len(parts) == 3:
+        return f"{parts[2]}-{parts[1]}-{parts[0]}"
+    return date_str
+
 
 @app.route('/')
 def index():
@@ -14,6 +24,7 @@ def index():
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
     if request.method == 'POST':
+        msg = None
         nome = request.form['nome']
         email = request.form['email']
         senha = request.form['senha']
@@ -34,9 +45,6 @@ def cadastro():
             return render_template('cadastro.html', msg=msg)
         elif dupli_nome is None:
             msg = "Erro interno. Tente novamente."
-            return render_template('cadastro.html', msg=msg)
-        if msg is None:
-            msg = "Erro interno, tente novamente."
             return render_template('cadastro.html', msg=msg)
         
         senha_hash = generate_password_hash(senha)
@@ -139,7 +147,8 @@ def registro():
         data_proxima = request.form['data_proxima']
         oficina_responsavel = session['usuario_nome']
         msg = db.registrar_troca(id_veiculo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel)
-        return render_template('registro.html', msg=msg)
+        msg_type = 'success' if 'sucesso' in msg.lower() else 'error'
+        return render_template('registro.html', msg=msg, msg_type=msg_type)
     return render_template('registro.html')
 
 

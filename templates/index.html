@@ -1,19 +1,47 @@
 {% extends "base.html" %}
 
+{% block title %}Início - Minha Correia{% endblock %}
+
 {% block content %}
-    <h1>Controle de troca da correia dentada</h1>
-    <div class="container">
-        <div class="card">
-            <h2>Proprietário</h2>
-            <p>Consulte o status atual da sua correia dentada.</p>
-            <p>Não é necessário Login.</p>
-            <a href="/consulta" class="button">Consultar</a>
+    <div class="hero">
+        <h1>Bem-vindo ao Minha Correia</h1>
+        <p>Gerencie seus registros de trocas de correia de forma simples e eficiente</p>
+        {% if not session.usuario_id %}
+            <div class="btn-group">
+                <a href="{{ url_for('cadastro') }}" class="btn btn-primary">Criar Conta</a>
+                <a href="{{ url_for('login') }}" class="btn btn-success">Fazer Login</a>
+            </div>
+        {% else %}
+            <div class="btn-group">
+                <a href="{{ url_for('registro') }}" class="btn btn-primary">Registrar Nova Troca</a>
+                <a href="{{ url_for('consulta') }}" class="btn btn-success">Consultar Histórico</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="grid">
+        <div class="grid-item">
+            <h3>📋 Simples</h3>
+            <p>Interface limpa e intuitiva para registrar suas trocas de correia em poucos cliques.</p>
         </div>
-        <div class="card">
-            <h2>Oficina</h2>
-            <p>Registre uma troca de correia dentada.</p>
-            <p>É necessário Login.</p>
-            <a href="/registro/troca" class="button">Registro</a>
+        <div class="grid-item">
+            <h3>🔍 Consulte</h3>
+            <p>Busque o histórico de trocas de qualquer veículo pela placa.</p>
+        </div>
+        <div class="grid-item">
+            <h3>📊 Organize</h3>
+            <p>Mantenha organizado todas as manutenções realizadas em seus veículos.</p>
         </div>
     </div>
+
+    {% if session.usuario_id %}
+        <div class="card">
+            <h2>Suas Funcionalidades</h2>
+            <p>Você está logado como <strong>{{ session.usuario_nome }}</strong>. Acesse as opções abaixo para gerenciar seus registros:</p>
+            <ul style="margin-top: 1rem; margin-left: 1.5rem;">
+                <li><a href="{{ url_for('registro') }}">Registrar uma nova troca de correia</a></li>
+                <li><a href="{{ url_for('consulta') }}">Consultar histórico de trocas</a></li>
+            </ul>
+        </div>
+    {% endif %}
 {% endblock %}
