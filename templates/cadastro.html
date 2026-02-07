@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Cadastro de Oficina</h1>
+    <form action="/cadastro" method="post">
+        <label for="nome">Nome da Oficina:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" placeholder="Email" required>
+
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" required>
+
+        <label for="token">Token de acesso:</label>
+        <input type="text" id="token" name="token" required>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+    {% if msg %}
+  <p>{{ msg }}</p>
+    {% endif %}
+{% endblock %}

@@ -1,17 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Controle de troca da sua correia dentada</h1>
+    <h1>Controle de troca da correia dentada</h1>
     <div class="container">
         <div class="card">
             <h2>Proprietário</h2>
             <p>Consulte o status atual da sua correia dentada.</p>
+            <p>Não é necessário Login.</p>
             <a href="/consulta" class="button">Consultar</a>
         </div>
         <div class="card">
             <h2>Oficina</h2>
-            <p>Registre um veículo ou troca de correia dentada.</p>
-            <a href="/registro" class="button">Registro</a>
+            <p>Registre uma troca de correia dentada.</p>
+            <p>É necessário Login.</p>
+            <a href="/registro/troca" class="button">Registro</a>
         </div>
     </div>
 {% endblock %}

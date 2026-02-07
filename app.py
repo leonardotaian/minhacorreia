@@ -1,25 +1,105 @@
-from flask import Flask, render_template, request, url_for
+from flask import Flask, session, render_template, request, url_for, flash, redirect
 import db, re
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
+
 app = Flask(__name__)
+app.secret_key = 'chave-secreta-para-sessao'
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+    if request.method == 'POST':
+        nome = request.form['nome']
+        email = request.form['email']
+        senha = request.form['senha']
+        token = request.form['token']
+        if token != "tokencadastrobeta":
+            msg = "Token de cadastro inválido."
+            return render_template('cadastro.html', msg=msg)
+        dupli_email = db.consultar_duplicidade_email(email)
+        if dupli_email is True:
+            msg = "Email já cadastrado. Faça login ou use outro email."
+            return render_template('cadastro.html', msg=msg)
+        elif dupli_email is None:
+            msg = "Erro interno. Tente novamente."
+            return render_template('cadastro.html', msg=msg)
+        dupli_nome = db.consultar_duplicidade_nome(nome)
+        if dupli_nome is True:
+            msg = "Nome já cadastrado. Faça login ou use outro nome."
+            return render_template('cadastro.html', msg=msg)
+        elif dupli_nome is None:
+            msg = "Erro interno. Tente novamente."
+            return render_template('cadastro.html', msg=msg)
+        
+        senha_hash = generate_password_hash(senha)
+        msg = db.cadastrar_oficina(nome, email, senha_hash)
+        flash(msg, "success")
+            
+        oficina = db.consultar_oficina(email)
+        session['usuario_id'] = oficina[0]
+        session['usuario_nome'] = oficina[1]
+        
+        return redirect(url_for('index'))
+        
+        
+    return render_template('cadastro.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        if 'usuario_id' in session:
+            flash("Você já está logado.", "info")
+            return redirect(url_for('index'))
+    if request.method == 'POST':
+        email = request.form['email']
+        senha = request.form['senha']
+        oficina = db.consultar_oficina(email)
+        if not oficina:
+            msg = "Email ou senha incorretos."
+            return render_template('login.html', msg=msg)
+        senha_salva = oficina[3]
+        senha_valida = check_password_hash(senha_salva, senha)
+        if senha_valida is True:
+            session['usuario_id'] = oficina[0]
+            session['usuario_nome'] = oficina[1]
+            flash("Login realizado com sucesso.", "success")
+            return redirect(url_for('registro'))
+        else:
+            msg = "Email ou senha incorretos."
+            return render_template('login.html', msg=msg)
+        
+        
+    return render_template('login.html')        
+
+@app.route('/logout')
+def logout():
+    session.pop('usuario_id', None)
+    flash("Logout realizado com sucesso.")
+    return redirect(url_for('index'))
+
+
 @app.route('/consulta', methods=['GET', 'POST'])
 def consulta():
     if request.method == 'POST':
         msg = None
         placa = request.form['placa']
-        veiculo = db.consultar_troca(placa)
+        id_veiculo = db.obter_id_veiculo(placa)
+        veiculo = db.consultar_troca(id_veiculo)
         if not veiculo:
                 msg = "Nenhuma troca registrada para este veículo."
         return render_template('consulta.html', msg=msg, veiculo=veiculo)
     return render_template('consulta.html')
 
-
 @app.route('/registro/troca', methods=['GET', 'POST'])    
 def registro():
+    if 'usuario_id' not in session:
+        flash("Faça login para acessar o registro de troca.", "error")
+        return redirect(url_for('login'))
     if request.method == 'POST':
         placa = request.form['placa']
         placa = placa.strip().upper()
@@ -47,8 +127,8 @@ def registro():
             return render_template('registro.html', msg=msg)
         km_proxima = int(request.form['km_proxima'])
         data_proxima = request.form['data_proxima']
-        oficina_responsavel = request.form['oficina_responsavel']
-        msg = db.registrar_troca(id_veiculo, placa, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel)
+        oficina_responsavel = session['usuario_nome']
+        msg = db.registrar_troca(id_veiculo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel)
         return render_template('registro.html', msg=msg)
     return render_template('registro.html')
 
