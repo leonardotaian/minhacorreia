@@ -1,5 +1,5 @@
 from flask import Flask, session, render_template, request, url_for, flash, redirect
-import db, re
+import dbp, re
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
 
@@ -8,13 +8,14 @@ app.secret_key = 'chave-secreta-para-sessao'
 
 @app.template_filter('br_date')
 def br_date(date_str):
-    """Converte data de YYYY-MM-DD para DD-MM-YYYY"""
     if not date_str:
         return ''
-    parts = str(date_str).split('-')
-    if len(parts) == 3:
-        return f"{parts[2]}-{parts[1]}-{parts[0]}"
-    return date_str
+    else:
+        partes = date_str.split('-')
+        if len(partes) != 3:
+            return date_str
+        ano, mes, dia = partes
+        return f"{dia}/{mes}/{ano}"
 
 
 @app.route('/')
@@ -32,14 +33,14 @@ def cadastro():
         if token != "tokencadastrobeta":
             msg = "Token de cadastro inválido."
             return render_template('cadastro.html', msg=msg)
-        dupli_email = db.consultar_duplicidade_email(email)
+        dupli_email = dbp.consultar_duplicidade_email(email)
         if dupli_email is True:
             msg = "Email já cadastrado. Faça login ou use outro email."
             return render_template('cadastro.html', msg=msg)
         elif dupli_email is None:
             msg = "Erro interno. Tente novamente."
             return render_template('cadastro.html', msg=msg)
-        dupli_nome = db.consultar_duplicidade_nome(nome)
+        dupli_nome = dbp.consultar_duplicidade_nome(nome)
         if dupli_nome is True:
             msg = "Nome já cadastrado. Faça login ou use outro nome."
             return render_template('cadastro.html', msg=msg)
@@ -48,10 +49,10 @@ def cadastro():
             return render_template('cadastro.html', msg=msg)
         
         senha_hash = generate_password_hash(senha)
-        msg = db.cadastrar_oficina(nome, email, senha_hash)
+        msg = dbp.cadastrar_oficina(nome, email, senha_hash)
         flash(msg, "success")
             
-        oficina = db.consultar_oficina(email)
+        oficina = dbp.consultar_oficina(email)
         session['usuario_id'] = oficina[0]
         session['usuario_nome'] = oficina[1]
         
@@ -69,7 +70,7 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         senha = request.form['senha']
-        oficina = db.consultar_oficina(email)
+        oficina = dbp.consultar_oficina(email)
         if not oficina:
             msg = "Email ou senha incorretos."
             return render_template('login.html', msg=msg)
@@ -100,11 +101,11 @@ def consulta():
     if request.method == 'POST':
         msg = None
         placa = request.form['placa']
-        id_veiculo = db.obter_id_veiculo(placa)
+        id_veiculo = dbp.obter_id_veiculo(placa)
         if id_veiculo is None:
             msg = "Veículo não cadastrado."
             return render_template('consulta.html', msg=msg)
-        veiculo = db.consultar_troca(id_veiculo)
+        veiculo = dbp.consultar_troca(id_veiculo)
         
         return render_template('consulta.html', msg=msg, veiculo=veiculo)
     return render_template('consulta.html')
@@ -125,11 +126,11 @@ def registro():
         if len (placa) != 7:
             msg = "Placa deve conter exatamente 7 caracteres."
             return render_template('registro.html', msg=msg)
-        id_veiculo = db.obter_id_veiculo(placa)
+        id_veiculo = dbp.obter_id_veiculo(placa)
         if id_veiculo is None:
             marca = request.form['marca']
             modelo =  request.form['modelo']
-            id_veiculo = db.criar_veiculo(placa, marca, modelo)
+            id_veiculo = dbp.criar_veiculo(placa, marca, modelo)
         data_troca = request.form['data_troca']
         ano_atual = date.today().year
         ano = int(data_troca[:4])
@@ -146,7 +147,7 @@ def registro():
         km_proxima = int(request.form['km_proxima'])
         data_proxima = request.form['data_proxima']
         oficina_responsavel = session['usuario_nome']
-        msg = db.registrar_troca(id_veiculo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel)
+        msg = dbp.registrar_troca(id_veiculo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel)
         msg_type = 'success' if 'sucesso' in msg.lower() else 'error'
         return render_template('registro.html', msg=msg, msg_type=msg_type)
     return render_template('registro.html')
