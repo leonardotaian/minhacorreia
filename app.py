@@ -6,6 +6,15 @@ from datetime import datetime, date
 app = Flask(__name__)
 app.secret_key = 'chave-secreta-para-sessao'
 
+def br_date_filter(date_obj):
+    """Converte data para formato brasileiro DD/MM/YYYY"""
+    if date_obj is None:
+        return ''
+    if isinstance(date_obj, str):
+        return date_obj
+    return date_obj.strftime('%d/%m/%Y')
+
+app.jinja_env.filters['br_date'] = br_date_filter
 
 
 @app.route('/')
@@ -91,9 +100,20 @@ def consulta():
         if id_veiculo is None:
             msg = "Veículo não cadastrado."
             return render_template('consulta.html', msg=msg)
-        veiculo = dbp.consultar_troca(id_veiculo)
+        trocas = dbp.consultar_troca(id_veiculo)
+        if not trocas:
+            msg = "Nenhum registro de troca encontrado."
+            return render_template('consulta.html', msg=msg)
         
-        return render_template('consulta.html', msg=msg, veiculo=veiculo)
+        # Pega a primeira troca (mais recente)
+        veiculo = trocas[0]
+        data_troca = veiculo[2]
+        km_troca = veiculo[3]
+        km_proxima = veiculo[4]
+        data_proxima = veiculo[5]
+        oficina = dbp.nome_oficina(veiculo[6])
+        
+        return render_template('consulta.html', msg=msg, data_troca=data_troca, km_troca=km_troca, km_proxima=km_proxima, data_proxima=data_proxima, oficina=oficina)
     return render_template('consulta.html')
 
 @app.route('/registro/troca', methods=['GET', 'POST'])    
@@ -158,6 +178,8 @@ def registro():
         oficina_responsavel = session['usuario_id']
         
         msg = dbp.registrar_troca(id_veiculo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel)
+        if msg is None:
+            msg = "Erro ao registrar troca."
         msg_type = 'success' if msg and 'sucesso' in msg.lower() else 'error'
         
         return render_template('registro.html', msg=msg, msg_type=msg_type)

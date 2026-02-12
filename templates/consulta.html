@@ -18,39 +18,33 @@
         </form>
     </div>
 
-    {% if veiculo %}
+    {% if data_troca %}
         <div class="card">
-            <h2>Histórico de Trocas</h2>
-            {% if veiculo|length > 0 %}
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data da Troca</th>
-                                <th>Quilometragem</th>
-                                <th>Quilometragem da Próxima Troca</th>
-                                <th>Data Prevista para a Próxima Troca</th>
-                                <th>Oficina Responsável</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for troca in veiculo %}
-                                <tr>
-                                    <td>{{ troca[2] | br_date }}</td>
-                                    <td>{{ "{:,}".format(troca[3]).replace(',', '.') }} km</td>
-                                    <td>{{ "{:,}".format(troca[4]).replace(',', '.') }} km</td>
-                                    <td>{{ troca[5] | br_date }}</td>
-                                    <td>{{ troca[6] }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <h2>Informações da Troca</h2>
+            <div class="trade-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; color: var(--secondary-color);">Última Troca</h3>
+                    <span class="badge badge-success">{{ data_troca | br_date }}</span>
                 </div>
-            {% else %}
-                <div class="alert alert-info">
-                    Nenhum registro de troca encontrado para este veículo.
+                <div class="trade-info">
+                    <div class="trade-field">
+                        <label>Quilometragem da Troca</label>
+                        <value>{{ "{:,}".format(km_troca).replace(',', '.') }} km</value>
+                    </div>
+                    <div class="trade-field">
+                        <label>Quilometragem da Próxima Troca</label>
+                        <value>{{ "{:,}".format(km_proxima).replace(',', '.') }} km</value>
+                    </div>
+                    <div class="trade-field">
+                        <label>Data Prevista para Próxima Troca</label>
+                        <value>{{ data_proxima | br_date }}</value>
+                    </div>
+                    <div class="trade-field">
+                        <label>Oficina Responsável</label>
+                        <value>{{ oficina[1] }}</value>
+                    </div>
                 </div>
-            {% endif %}
+            </div>
         </div>
     {% endif %}
 {% endblock %}

@@ -47,17 +47,18 @@ def cadastrar_oficina(nome, email, senha_hash):
         print(e)
         return None
 
-def consultar_oficina(id):
+def consultar_oficina(email):
     try:
         with get_connection() as conn:
             with conn.cursor() as cursor:
-                sql_consulta_oficina = '''SELECT email FROM oficina WHERE id=%s'''
-                cursor.execute(sql_consulta_oficina, (id,))
+                sql_consulta_oficina = '''SELECT id, nome, email, pw FROM oficina WHERE email=%s'''
+                cursor.execute(sql_consulta_oficina, (email,))
                 oficina = cursor.fetchone()
         return oficina
     except Exception as e:
         print(e)
         return None
+        
     
 def registrar_troca(id_veiculo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel):
     try:
@@ -108,3 +109,14 @@ def consultar_duplicidade_nome(nome):
         print(e)
         return None
     
+def nome_oficina(id):
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cursor:
+                sql_nome_oficina = '''SELECT nome FROM oficina WHERE id=%s'''
+                cursor.execute(sql_nome_oficina, (id,))
+                resultado = cursor.fetchone()
+        return resultado[0] if resultado else None
+    except Exception as e:
+        print(e)
+        return None

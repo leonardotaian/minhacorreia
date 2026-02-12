@@ -316,6 +316,45 @@ footer {
     margin-top: 3rem;
 }
 
+/* Card estilo lista */
+.trade-card {
+    background: white;
+    border-left: 4px solid var(--secondary-color);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.trade-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.trade-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.trade-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.trade-field label {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.trade-field value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .header-container {
@@ -324,8 +363,8 @@ footer {
     }
 
     nav ul {
-        flex-direction: column;
         gap: 0.5rem;
+        justify-content: center;
     }
 
     h1 {
