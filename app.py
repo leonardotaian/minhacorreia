@@ -1,21 +1,11 @@
 from flask import Flask, session, render_template, request, url_for, flash, redirect
 import dbp, re
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import date
+from datetime import datetime, date
 
 app = Flask(__name__)
 app.secret_key = 'chave-secreta-para-sessao'
 
-@app.template_filter('br_date')
-def br_date(date_str):
-    if not date_str:
-        return ''
-    else:
-        partes = date_str.split('-')
-        if len(partes) != 3:
-            return date_str
-        ano, mes, dia = partes
-        return f"{dia}/{mes}/{ano}"
 
 
 @app.route('/')
@@ -38,25 +28,20 @@ def cadastro():
             msg = "Email já cadastrado. Faça login ou use outro email."
             return render_template('cadastro.html', msg=msg)
         elif dupli_email is None:
-            msg = "Erro interno. Tente novamente."
-            return render_template('cadastro.html', msg=msg)
-        dupli_nome = dbp.consultar_duplicidade_nome(nome)
-        if dupli_nome is True:
-            msg = "Nome já cadastrado. Faça login ou use outro nome."
-            return render_template('cadastro.html', msg=msg)
-        elif dupli_nome is None:
-            msg = "Erro interno. Tente novamente."
-            return render_template('cadastro.html', msg=msg)
-        
-        senha_hash = generate_password_hash(senha)
-        msg = dbp.cadastrar_oficina(nome, email, senha_hash)
-        flash(msg, "success")
-            
-        oficina = dbp.consultar_oficina(email)
-        session['usuario_id'] = oficina[0]
-        session['usuario_nome'] = oficina[1]
-        
-        return redirect(url_for('index'))
+            dupli_nome = dbp.consultar_duplicidade_nome(nome)
+            if dupli_nome is True:
+                msg = "Nome já cadastrado. Faça login ou use outro nome."
+                return render_template('cadastro.html', msg=msg)
+            elif dupli_nome is None:
+                senha_hash = generate_password_hash(senha)
+                msg = dbp.cadastrar_oficina(nome, email, senha_hash)
+                flash(msg, "success")
+                    
+                oficina = dbp.consultar_oficina(email)
+                session['usuario_id'] = oficina[0]
+                session['usuario_nome'] = oficina[1]
+                
+                return redirect(url_for('index'))
         
         
     return render_template('cadastro.html')
@@ -102,6 +87,7 @@ def consulta():
         msg = None
         placa = request.form['placa']
         id_veiculo = dbp.obter_id_veiculo(placa)
+        print(id_veiculo)
         if id_veiculo is None:
             msg = "Veículo não cadastrado."
             return render_template('consulta.html', msg=msg)
@@ -116,6 +102,7 @@ def registro():
         flash("Faça login para acessar o registro de troca.", "error")
         return redirect(url_for('login'))
     if request.method == 'POST':
+        
         placa = request.form['placa']
         placa = placa.strip().upper()
         padrao_antigo = r'^[A-Z]{3}[0-9]{4}$'
@@ -126,28 +113,55 @@ def registro():
         if len (placa) != 7:
             msg = "Placa deve conter exatamente 7 caracteres."
             return render_template('registro.html', msg=msg)
+        
         id_veiculo = dbp.obter_id_veiculo(placa)
+        
         if id_veiculo is None:
             marca = request.form['marca']
             modelo =  request.form['modelo']
             id_veiculo = dbp.criar_veiculo(placa, marca, modelo)
+
+        if id_veiculo is None:
+            msg = "Erro ao criar veículo"
+            return render_template('registro.html', msg=msg)
+        
         data_troca = request.form['data_troca']
         ano_atual = date.today().year
-        ano = int(data_troca[:4])
-        if ano != ano_atual:
+        try:
+            data_obj = datetime.strptime(data_troca, '%Y-%m-%d')
+        except ValueError:
+            msg = "Data de troca inválida. Use o formato YYYY-MM-DD."
+            return render_template('registro.html', msg=msg)
+        if data_obj.year != ano_atual:
             msg = "Ano da troca deve ser o ano atual."
             return render_template('registro.html', msg=msg)
-        km_troca = int(request.form['km_troca'])
+        
+        try:
+            km_troca = int(request.form['km_troca'])
+        except ValueError:
+            msg = "Quilometragem da troca inválida. Deve ser um número inteiro."
+            return render_template('registro.html', msg=msg)
+            
         if km_troca < 0:
             msg = "Quilometragem da troca deve ser maior que zero."
             return render_template('registro.html', msg=msg)
+        
         if km_troca > 999999:
             msg = "Quilometragem não aceita (maior que 999.999 km)."
             return render_template('registro.html', msg=msg)
-        km_proxima = int(request.form['km_proxima'])
+        try:
+            km_proxima = int(request.form['km_proxima'])
+        except ValueError:
+            msg = "Quilometragem da próxima troca inválida. Deve ser um número inteiro."
+            return render_template('registro.html', msg=msg)
         data_proxima = request.form['data_proxima']
-        oficina_responsavel = session['usuario_nome']
+        oficina_responsavel = session['usuario_id']
+        
         msg = dbp.registrar_troca(id_veiculo, data_troca, km_troca, km_proxima, data_proxima, oficina_responsavel)
-        msg_type = 'success' if 'sucesso' in msg.lower() else 'error'
+        msg_type = 'success' if msg and 'sucesso' in msg.lower() else 'error'
+        
         return render_template('registro.html', msg=msg, msg_type=msg_type)
     return render_template('registro.html')
+
+
+app.run(debug=True)

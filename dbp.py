@@ -9,16 +9,19 @@ def get_connection():
         port="5432")
 
 def obter_id_veiculo(placa):
+    placa = placa.strip().upper()
     try:
         with get_connection() as conn:
             with conn.cursor() as cursor:
                 sql_obter_id_veiculo = '''SELECT id FROM veiculo WHERE placa=%s'''
                 cursor.execute(sql_obter_id_veiculo, (placa,))
+                print(placa)
                 resultado = cursor.fetchone()
                 return resultado[0] if resultado else None                
     except Exception as e:
         print(e)
         return None
+
 
 def criar_veiculo(placa, marca, modelo):
     try:
@@ -44,12 +47,12 @@ def cadastrar_oficina(nome, email, senha_hash):
         print(e)
         return None
 
-def consultar_oficina(email):
+def consultar_oficina(id):
     try:
         with get_connection() as conn:
             with conn.cursor() as cursor:
-                sql_consulta_oficina = '''SELECT * FROM oficina WHERE email=%s'''
-                cursor.execute(sql_consulta_oficina, (email,))
+                sql_consulta_oficina = '''SELECT email FROM oficina WHERE id=%s'''
+                cursor.execute(sql_consulta_oficina, (id,))
                 oficina = cursor.fetchone()
         return oficina
     except Exception as e:
@@ -72,7 +75,7 @@ def consultar_troca(id_veiculo):
     try:
         with get_connection() as conn:
             with conn.cursor() as cursor:
-                sql_consultar_troca = '''SELECT data_troca, km_troca, km_proxima, data_proxima, id_oficina FROM troca WHERE id_veiculo=%s ORDER BY data_troca DESC'''
+                sql_consultar_troca = '''SELECT * FROM troca WHERE id_veiculo=%s ORDER BY data_troca DESC'''
                 cursor.execute(sql_consultar_troca, (id_veiculo,))
                 trocas = cursor.fetchall()
         return trocas
@@ -84,9 +87,10 @@ def consultar_duplicidade_email(email):
     try:
         with get_connection() as conn:
             with conn.cursor() as cursor:
-                sql_consultar_email = '''SELECT id FROM oficina WHERE email=%s'''
+                sql_consultar_email = '''SELECT email FROM oficina WHERE email=%s'''
                 cursor.execute(sql_consultar_email, (email,))
                 resultado = cursor.fetchone()
+                print(resultado)
         return resultado[0] if resultado else None
     except Exception as e:
         print(e)
