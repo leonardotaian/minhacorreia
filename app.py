@@ -112,8 +112,13 @@ def consulta():
         km_proxima = veiculo[4]
         data_proxima = veiculo[5]
         oficina = dbp.nome_oficina(veiculo[6])
+        mod_mar = dbp.obter_modelo_marca(id_veiculo)
+        marca = mod_mar[0]
+        modelo = mod_mar[1]
+        print(marca, modelo)
         
-        return render_template('consulta.html', msg=msg, data_troca=data_troca, km_troca=km_troca, km_proxima=km_proxima, data_proxima=data_proxima, oficina=oficina)
+        
+        return render_template('consulta.html', msg=msg, data_troca=data_troca, km_troca=km_troca, km_proxima=km_proxima, data_proxima=data_proxima, oficina=oficina, marca=marca, modelo=modelo)
     return render_template('consulta.html')
 
 @app.route('/registro/troca', methods=['GET', 'POST'])    
@@ -186,4 +191,4 @@ def registro():
     return render_template('registro.html')
 
 
-app.run(debug=True)
+app.run(host='0.0.0.0', port=5000, debug=True)

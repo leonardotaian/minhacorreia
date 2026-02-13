@@ -5,7 +5,7 @@
 {% block content %}
     <div class="card">
         <h1>Consultar Histórico de Trocas</h1>
-        <p>Pesquise o histórico de trocas de correia de um veículo usando a placa</p>
+        <p>Pesquise o histórico de trocas de correia dentada de um veículo usando a placa</p>
 
         <form method="POST" action="{{ url_for('consulta') }}">
             <div class="form-group">
@@ -14,7 +14,7 @@
                 <small style="color: #7f8c8d; margin-top: 0.25rem; display: block;">Formatos aceitos: ABC1234 (antigo) ou ABC1D34 (Mercosul)</small>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Buscar Histórico</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Buscar</button>
         </form>
     </div>
 
@@ -41,7 +41,11 @@
                     </div>
                     <div class="trade-field">
                         <label>Oficina Responsável</label>
-                        <value>{{ oficina[1] }}</value>
+                        <value>{{ oficina }}</value>
+                    </div>
+                    <div class="trade-field">
+                        <label>Marca e Modelo</label>
+                        <value>{{ marca }} {{ modelo }}</value>
                     </div>
                 </div>
             </div>
