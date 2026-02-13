@@ -96,7 +96,6 @@ def consulta():
         msg = None
         placa = request.form['placa']
         id_veiculo = dbp.obter_id_veiculo(placa)
-        print(id_veiculo)
         if id_veiculo is None:
             msg = "Veículo não cadastrado."
             return render_template('consulta.html', msg=msg)
@@ -105,7 +104,6 @@ def consulta():
             msg = "Nenhum registro de troca encontrado."
             return render_template('consulta.html', msg=msg)
         
-        # Pega a primeira troca (mais recente)
         veiculo = trocas[0]
         data_troca = veiculo[2]
         km_troca = veiculo[3]
@@ -132,7 +130,7 @@ def registro():
         padrao_antigo = r'^[A-Z]{3}[0-9]{4}$'
         padrao_mercosul = r'^[A-Z]{3}[0-9][A-Z][0-9]{2}$'
         if not (re.match(padrao_antigo, placa) or re.match(padrao_mercosul, placa)):
-            msg = "Placa inválida. Use o formato ABC1234 ou ABC1D34 (mercosul)."
+            msg = "Placa inválida. Use o formato ABC1234 (antigo) ou ABC1D34 (mercosul)."
             return render_template('registro.html', msg=msg)
         if len (placa) != 7:
             msg = "Placa deve conter exatamente 7 caracteres."
@@ -154,10 +152,10 @@ def registro():
         try:
             data_obj = datetime.strptime(data_troca, '%Y-%m-%d')
         except ValueError:
-            msg = "Data de troca inválida. Use o formato YYYY-MM-DD."
+            msg = "Data de troca inválida. Use o formato disponibilizado no calendário."
             return render_template('registro.html', msg=msg)
         if data_obj.year != ano_atual:
-            msg = "Ano da troca deve ser o ano atual."
+            msg = "Ano da troca deve ser o ano atual, o sistema não registra trocas antigas."
             return render_template('registro.html', msg=msg)
         
         try:
@@ -171,13 +169,17 @@ def registro():
             return render_template('registro.html', msg=msg)
         
         if km_troca > 999999:
-            msg = "Quilometragem não aceita (maior que 999.999 km)."
+            msg = "Quilometragem não aceita: (maior que 999.999 km)."
             return render_template('registro.html', msg=msg)
         try:
             km_proxima = int(request.form['km_proxima'])
         except ValueError:
             msg = "Quilometragem da próxima troca inválida. Deve ser um número inteiro."
             return render_template('registro.html', msg=msg)
+        if km_troca >= km_proxima:
+            msg = "Quilometragem da próxima troca deve ser maior que a quilometragem da troca atual."
+            return render_template('registro.html', msg=msg)
+        
         data_proxima = request.form['data_proxima']
         oficina_responsavel = session['usuario_id']
         
