@@ -15,7 +15,6 @@ def obter_id_veiculo(placa):
             with conn.cursor() as cursor:
                 sql_obter_id_veiculo = '''SELECT id FROM veiculo WHERE placa=%s'''
                 cursor.execute(sql_obter_id_veiculo, (placa,))
-                print(placa)
                 resultado = cursor.fetchone()
                 return resultado[0] if resultado else None                
     except Exception as e:
@@ -103,7 +102,6 @@ def consultar_duplicidade_email(email):
                 sql_consultar_email = '''SELECT email FROM oficina WHERE email=%s'''
                 cursor.execute(sql_consultar_email, (email,))
                 resultado = cursor.fetchone()
-                print(resultado)
         return resultado[0] if resultado else None
     except Exception as e:
         print(e)
@@ -116,7 +114,6 @@ def consultar_duplicidade_nome(nome):
                 sql_consultar_nome = '''SELECT id FROM oficina WHERE nome=%s'''
                 cursor.execute(sql_consultar_nome, (nome,))
                 resultado = cursor.fetchone()
-                print(resultado)
         return resultado[0] if resultado else None
     except Exception as e:
         print(e)

@@ -8,22 +8,39 @@
 </head>
 <body>
     <header>
-        <div class="header-container">
-            <div class="logo">🔧 Minha Correia</div>
-            <nav>
-                <ul>
-                    <li><a href="{{ url_for('index') }}">Início</a></li>
-                    <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
-                    {% if session.usuario_id %}
-                        <li><a href="{{ url_for('registro') }}">Registrar Troca</a></li>
-                        <li><span>Olá, {{ session.usuario_nome }}!</span></li>
-                        <li><a href="{{ url_for('logout') }}">Sair</a></li>
-                    {% else %}
-                        <li><a href="{{ url_for('login') }}">Login</a></li>
-                        <li><a href="{{ url_for('cadastro') }}">Cadastro</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
+        <div class="header-container" id="headerContainer">
+            <div class="left-group">
+                <div class="logo">🔧 Minha Correia</div>
+                <nav class="main-nav">
+                    <ul class="nav-left">
+                        <li><a href="{{ url_for('index') }}">Início</a></li>
+                        <li><a href="{{ url_for('consulta') }}">Consultar</a></li>
+                        {% if session.usuario_id %}
+                            <li><a href="{{ url_for('registro') }}">Registrar Troca</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="right-group">
+                {% if session.usuario_id %}
+                    <div class="account-dropdown" id="accountDropdown">
+                        <button class="account-btn" id="accountBtn">{{ session.usuario_nome }} ▾</button>
+                        <ul class="dropdown-menu" id="accountMenu">
+                            <li><a href="{{ url_for('logout') }}">Sair</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <nav class="auth-links">
+                        <ul>
+                            <li><a href="{{ url_for('login') }}">Login</a></li>
+                            <li><a href="{{ url_for('cadastro') }}">Cadastro</a></li>
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menu">☰</button>
         </div>
     </header>
 
@@ -45,7 +62,36 @@
 
     <footer>
         <p>&copy; 2026 Minha Correia - Gerenciamento de Trocas de Correia. Todos os direitos reservados.</p>
-        <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">Desenvolvido por Leonardo Taian</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">Desenvolvido por Leonardo Taian
+            <a href="https://wa.me/5551980547521" target="_blank" rel="noopener" title="Sugestões via WhatsApp" style="margin-left:0.6rem; display:inline-block; vertical-align: middle;">
+                <img src="{{ url_for('static', filename='icons/wpp.svg') }}" alt="WhatsApp" width="20" height="20" style="opacity: 0.9;">
+            </a>
+        </p>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var header = document.getElementById('headerContainer');
+            var toggle = document.getElementById('navToggle');
+            var accountBtn = document.getElementById('accountBtn');
+            var accountDropdown = document.getElementById('accountDropdown');
+
+            if (toggle && header) {
+                toggle.addEventListener('click', function (e) {
+                    header.classList.toggle('nav-open');
+                });
+            }
+
+            if (accountBtn && accountDropdown) {
+                accountBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    accountDropdown.classList.toggle('open');
+                });
+
+                document.addEventListener('click', function () {
+                    accountDropdown.classList.remove('open');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -20,7 +20,12 @@
 
     {% if data_troca %}
         <div class="card">
-            <h2>Informações da Troca</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;">Informações da Troca</h2>
+                <button onclick="window.print()" class="btn btn-ghost" title="Imprimir consulta" style="padding: 0.5rem 0.8rem; font-size: 0.9rem;">
+                    🖨️ Imprimir Consulta
+                </button>
+            </div>
             <div class="trade-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <h3 style="margin: 0; color: var(--secondary-color);">Última Troca</h3>

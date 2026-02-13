@@ -130,7 +130,7 @@ def registro():
         padrao_antigo = r'^[A-Z]{3}[0-9]{4}$'
         padrao_mercosul = r'^[A-Z]{3}[0-9][A-Z][0-9]{2}$'
         if not (re.match(padrao_antigo, placa) or re.match(padrao_mercosul, placa)):
-            msg = "Placa inválida. Use o formato ABC1234 (antigo) ou ABC1D34 (mercosul)."
+            msg = "Placa inválida. Use o formato ABC1234 (antigo) ou ABC1D23 (mercosul)."
             return render_template('registro.html', msg=msg)
         if len (placa) != 7:
             msg = "Placa deve conter exatamente 7 caracteres."
