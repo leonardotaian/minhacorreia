@@ -16,6 +16,13 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS oficina (
                 pw VARCHAR(255) NOT NULL)''')
 conn.commit()
 
+cursor.execute('''CREATE TABLE tokens (
+               id SERIAL PRIMARY KEY,
+               token VARCHAR(255) NOT NULL UNIQUE,
+               usado BOOLEAN NOT NULL DEFAULT FALSE)''')
+
+conn.commit()
+
 cursor.execute('''CREATE TABLE IF NOT EXISTS veiculo (
                 id SERIAL PRIMARY KEY,
                 placa VARCHAR(20) NOT NULL UNIQUE,

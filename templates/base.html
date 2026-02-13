@@ -27,6 +27,9 @@
                     <div class="account-dropdown" id="accountDropdown">
                         <button class="account-btn" id="accountBtn">{{ session.usuario_nome }} ▾</button>
                         <ul class="dropdown-menu" id="accountMenu">
+                            {% if session.is_admin is true %}
+                                <li><a href="{{ url_for('painel') }}">Painel</a></li>
+                            {% endif %}
                             <li><a href="{{ url_for('logout') }}">Sair</a></li>
                         </ul>
                     </div>
@@ -61,7 +64,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 Minha Correia - Gerenciamento de Trocas de Correia. Todos os direitos reservados.</p>
+        <p>&copy; 2026 Minha Correia - Gerenciamento de Trocas de Correia Dentada. Todos os direitos reservados.</p>
         <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">Desenvolvido por Leonardo Taian
             <a href="https://wa.me/5551980547521" target="_blank" rel="noopener" title="Sugestões via WhatsApp" style="margin-left:0.6rem; display:inline-block; vertical-align: middle;">
                 <img src="{{ url_for('static', filename='icons/wpp.svg') }}" alt="WhatsApp" width="20" height="20" style="opacity: 0.9;">

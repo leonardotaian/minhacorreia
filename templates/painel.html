@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Painel Administrativo - Minha Correia{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <h1>Painel Administrativo</h1>
+        <p>Tokens de acesso para cadastro de oficinas.</p>
+
+        {% if token %}
+            <div class="alert alert-success" role="alert" style="margin-top: 1rem;">
+                Token criado com sucesso: <strong>{{ token }}</strong>
+            </div>
+        {% endif %}
+
+        {% if msg %}
+            <div class="alert alert-error" role="alert" style="margin-top: 1rem;">
+                {{ msg }}
+            </div>
+        {% endif %}
+
+        <div style="margin-top: 2rem;">
+            <h2>Gerar Novo Token</h2>
+            <form method="POST" action="{{ url_for('criar_token') }}" style="margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary">Gerar Novo Token</button>
+            </form>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <h2>Tokens Disponíveis</h2>
+            <form method="POST" action="{{ url_for('consultar_tokens') }}" style="margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary">Consultar Tokens</button>
+            </form>
+
+            {% if tokens %}
+                <div style="margin-top: 1.5rem;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #ddd;">
+                                <th style="text-align: left; padding: 0.75rem;">Token</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for token_item in tokens %}
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 0.75rem;">{{ token_item }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

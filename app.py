@@ -1,10 +1,11 @@
 from flask import Flask, session, render_template, request, url_for, flash, redirect
-import dbp, re
+import dbp, re, secrets, string, os
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date
+from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = 'chave-secreta-para-sessao'
+app.secret_key = os.environ.get("SECRET_KEY",)
 
 def br_date_filter(date_obj):
     """Converte data para formato brasileiro DD/MM/YYYY"""
@@ -21,6 +22,56 @@ app.jinja_env.filters['br_date'] = br_date_filter
 def index():
     return render_template('index.html')
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('usuario_id'):
+            flash("Faça login para acessar esta página.", "error")
+            return redirect(url_for('login'))
+        
+        if not session.get('is_admin'):
+            flash("Acesso restrito ao administrador.", "danger")
+            return redirect(url_for('index'))
+
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/admin/criar/tokens', methods=['GET', 'POST'])
+@admin_required
+def criar_token():
+    if request.method == 'POST':
+        alfabeto = string.ascii_uppercase + string.digits
+        token = ''.join(secrets.choice(alfabeto) for _ in range(8))
+        msg = dbp.registrar_token(token)
+        if msg is None:
+            msg = "Erro ao criar token."
+            return render_template('painel.html', msg=msg)
+        else:
+            return render_template('painel.html', token=token)
+            
+    return render_template('painel.html')
+
+@app.route('/admin/consultar/tokens', methods=['GET', 'POST'])
+@admin_required
+def consultar_tokens():
+    if request.method == 'POST':
+        tokens = dbp.consultar_tokens_validos()
+        if tokens is None:
+            msg = "Erro ao consultar tokens."
+            return render_template('painel.html', msg=msg)
+        else:
+            return render_template('painel.html', tokens=tokens)
+            
+    return render_template('painel.html')
+
+
+@app.route('/admin/painel')
+@admin_required
+def painel():
+    return render_template('painel.html')
+
+
+
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
     if request.method == 'POST':
@@ -29,9 +80,11 @@ def cadastro():
         email = request.form['email']
         senha = request.form['senha']
         token = request.form['token']
-        if token != "tokencadastrobeta":
-            msg = "Token de cadastro inválido."
+        token_valido = dbp.validar_token(token)
+        if token_valido is False:
+            msg = "Token inválido ou já utilizado. Solicite um token válido ao administrador."
             return render_template('cadastro.html', msg=msg)
+        dbp.inutilizar_token(token)
         dupli_email = dbp.consultar_duplicidade_email(email)
         if dupli_email:
             msg = "Email já cadastrado. Faça login ou use outro email."
@@ -49,6 +102,7 @@ def cadastro():
                 oficina = dbp.consultar_oficina(email)
                 session['usuario_id'] = oficina[0]
                 session['usuario_nome'] = oficina[1]
+                session['is_admin'] = oficina[4]
                 
                 return redirect(url_for('index'))
         
@@ -73,6 +127,7 @@ def login():
         if senha_valida is True:
             session['usuario_id'] = oficina[0]
             session['usuario_nome'] = oficina[1]
+            session['is_admin'] = oficina[4]
             flash("Login realizado com sucesso.", "success")
             return redirect(url_for('registro'))
         else:
@@ -103,6 +158,7 @@ def consulta():
         if not trocas:
             msg = "Nenhum registro de troca encontrado."
             return render_template('consulta.html', msg=msg)
+        placa = placa.strip().upper()
         
         veiculo = trocas[0]
         data_troca = veiculo[2]
@@ -115,7 +171,7 @@ def consulta():
         modelo = mod_mar[1]
         
         
-        return render_template('consulta.html', msg=msg, data_troca=data_troca, km_troca=km_troca, km_proxima=km_proxima, data_proxima=data_proxima, oficina=oficina, marca=marca, modelo=modelo)
+        return render_template('consulta.html', msg=msg, data_troca=data_troca, km_troca=km_troca, km_proxima=km_proxima, data_proxima=data_proxima, oficina=oficina, marca=marca, modelo=modelo, placa=placa)
     return render_template('consulta.html')
 
 @app.route('/registro/troca', methods=['GET', 'POST'])    
@@ -192,4 +248,5 @@ def registro():
     return render_template('registro.html')
 
 
-app.run(host='0.0.0.0', port=5000, debug=True)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000, debug=True)

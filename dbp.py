@@ -20,6 +20,42 @@ def obter_id_veiculo(placa):
     except Exception as e:
         print(e)
         return None
+    
+def registrar_token(token):
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cursor:
+                sql_criar_token = '''INSERT INTO tokens (token, usado) VALUES (%s, false)'''
+                cursor.execute(sql_criar_token, (token,))
+                msg = "Token criado com sucesso!"
+        return msg
+    except Exception as e:
+        print(e)
+        return None
+    
+def consultar_tokens_validos():
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cursor:
+                sql_consultar_tokens = '''SELECT token FROM tokens WHERE usado=false'''
+                cursor.execute(sql_consultar_tokens)
+                tokens = cursor.fetchall()
+        return [token[0] for token in tokens] if tokens else None
+    except Exception as e:
+        print(e)
+        return None
+    
+def inutilizar_token(token):
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cursor:
+                sql_inutilizar_token = '''UPDATE tokens SET usado=true WHERE token=%s'''
+                cursor.execute(sql_inutilizar_token, (token,))
+                msg = "Token inutilizado com sucesso!"
+        return msg
+    except Exception as e:
+        print(e)
+        return None
 
 
 def criar_veiculo(placa, marca, modelo):
@@ -50,8 +86,8 @@ def cadastrar_oficina(nome, email, senha_hash):
     try:
         with get_connection() as conn:
             with conn.cursor() as cursor:
-                sql_registro_oficina = '''INSERT INTO oficina (nome, email, pw) VALUES (%s, %s, %s)'''
-                cursor.execute(sql_registro_oficina, (nome, email, senha_hash))
+                sql_registro_oficina = '''INSERT INTO oficina (nome, email, pw, is_admin) VALUES (%s, %s, %s, %s)'''
+                cursor.execute(sql_registro_oficina, (nome, email, senha_hash, False))
                 msg = "Oficina registrada com sucesso!"
         return msg
     except Exception as e:
@@ -62,7 +98,7 @@ def consultar_oficina(email):
     try:
         with get_connection() as conn:
             with conn.cursor() as cursor:
-                sql_consulta_oficina = '''SELECT id, nome, email, pw FROM oficina WHERE email=%s'''
+                sql_consulta_oficina = '''SELECT id, nome, email, pw, is_admin FROM oficina WHERE email=%s'''
                 cursor.execute(sql_consulta_oficina, (email,))
                 oficina = cursor.fetchone()
         return oficina
