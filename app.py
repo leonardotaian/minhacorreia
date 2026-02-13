@@ -115,7 +115,6 @@ def consulta():
         mod_mar = dbp.obter_modelo_marca(id_veiculo)
         marca = mod_mar[0]
         modelo = mod_mar[1]
-        print(marca, modelo)
         
         
         return render_template('consulta.html', msg=msg, data_troca=data_troca, km_troca=km_troca, km_proxima=km_proxima, data_proxima=data_proxima, oficina=oficina, marca=marca, modelo=modelo)

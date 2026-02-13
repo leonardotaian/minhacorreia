@@ -40,7 +40,7 @@ def obter_modelo_marca(id_veiculo):
         with get_connection() as conn:
             with conn.cursor() as cursor:
                 sql_obter_modelo_marca = '''SELECT marca, modelo FROM veiculo WHERE id=%s'''
-                cursor.execute(sql_obter_modelo_marca, (id,))
+                cursor.execute(sql_obter_modelo_marca, (id_veiculo,))
                 resultado = cursor.fetchone()
                 return resultado if resultado else None                
     except Exception as e:
