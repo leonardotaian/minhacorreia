@@ -33,12 +33,12 @@ def cadastro():
             msg = "Token de cadastro inválido."
             return render_template('cadastro.html', msg=msg)
         dupli_email = dbp.consultar_duplicidade_email(email)
-        if dupli_email is True:
+        if dupli_email:
             msg = "Email já cadastrado. Faça login ou use outro email."
             return render_template('cadastro.html', msg=msg)
         elif dupli_email is None:
             dupli_nome = dbp.consultar_duplicidade_nome(nome)
-            if dupli_nome is True:
+            if dupli_nome:
                 msg = "Nome já cadastrado. Faça login ou use outro nome."
                 return render_template('cadastro.html', msg=msg)
             elif dupli_nome is None:

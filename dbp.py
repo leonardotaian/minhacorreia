@@ -116,6 +116,7 @@ def consultar_duplicidade_nome(nome):
                 sql_consultar_nome = '''SELECT id FROM oficina WHERE nome=%s'''
                 cursor.execute(sql_consultar_nome, (nome,))
                 resultado = cursor.fetchone()
+                print(resultado)
         return resultado[0] if resultado else None
     except Exception as e:
         print(e)
